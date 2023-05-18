@@ -7,8 +7,12 @@ name = "pypi"
 looker-sdk = "*"
 ipython = "*"
 langchain = "*"
+pandas = "*"
+vertexai = "*"
+chromadb = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
 python_version = "3.8"

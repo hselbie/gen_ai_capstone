@@ -1,5 +1,4 @@
 import looker_sdk
-import random
 import math
 import time
 import functools
@@ -153,29 +152,16 @@ class CreateLookerEmbedding():
         return is_successful, embeddings_list_successful
 
     def execute(self):
-        content_metadata= self.looker_metadata['embedding_list'].tolist()
-        is_successful, content_metadata_embeddings= self.encode_text_to_embedding_batched(
-            content_metadata, api_calls_per_second=10, batch_size=5)
-        # THIS IS THE QUESTION ENTRY POINT!!!!
-        query_question = ['What are dashboards that list sales populations?']
-        x,y = self.encode_text_to_embedding_batched(query_question, api_calls_per_second=10, batch_size=5)
+        sentences = self.looker_metadata['embedding_list'].tolist()
+        is_successful, embeddings_list_successful = self.encode_text_to_embedding_batched(
+            sentences)
+        lmetadata_with_embeddings= self.looker_metadata
+        x = pd.DataFrame(embeddings_list_successful)
+        print(x.head(15))
+        
+        lmetadata_with_embeddings['embedding_list_embeddings'] = embeddings_list_successful
 
-        # Get the embeddings for the query question.
-        content_metadata= np.array(content_metadata)[is_successful]
-
-        # print(f"Query question = {query_question}")
-
-        # Get similarity scores for each embedding by using dot-product.
-        # scores = np.dot(content_metadata_embeddings[question_index], content_metadata_embeddings.T)
-        scores = np.dot(y,content_metadata_embeddings.T)
-
-        # # Print top 20 matches
-        # for index, (question, score) in enumerate(sorted(zip(content_metadata, scores), key=lambda x: x[1], reverse=True)[:20]
-        # ):
-        #     print(f"\t{index}: {question}: {score}")
-
-        return scores
-
+        return embeddings_list_successful
 
 
 if __name__ == '__main__':

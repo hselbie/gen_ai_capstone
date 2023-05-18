@@ -1,5 +1,4 @@
 import looker_sdk
-import random
 import math
 import time
 import functools
@@ -122,7 +121,7 @@ class CreateLookerEmbedding():
 
     def encode_texts_to_embeddings(self, sentences: list[str]):
         try:
-            embeddings = self.embedding_model.get_embeddings(sentences)
+            embeddings= self.embedding_model.get_embeddings(sentences)
             return [embedding.values for embedding in embeddings]
         except Exception:
             return [None for _ in range(len(sentences))]
@@ -153,29 +152,11 @@ class CreateLookerEmbedding():
         return is_successful, embeddings_list_successful
 
     def execute(self):
-        content_metadata= self.looker_metadata['embedding_list'].tolist()
-        is_successful, content_metadata_embeddings= self.encode_text_to_embedding_batched(
-            content_metadata, api_calls_per_second=10, batch_size=5)
-        # THIS IS THE QUESTION ENTRY POINT!!!!
-        query_question = ['What are dashboards that list sales populations?']
-        x,y = self.encode_text_to_embedding_batched(query_question, api_calls_per_second=10, batch_size=5)
+        sentences = self.looker_metadata['embedding_list']
+        is_successful, embeddings_list_successful = self.encode_text_to_embedding_batched(
+            sentences)
 
-        # Get the embeddings for the query question.
-        content_metadata= np.array(content_metadata)[is_successful]
-
-        # print(f"Query question = {query_question}")
-
-        # Get similarity scores for each embedding by using dot-product.
-        # scores = np.dot(content_metadata_embeddings[question_index], content_metadata_embeddings.T)
-        scores = np.dot(y,content_metadata_embeddings.T)
-
-        # # Print top 20 matches
-        # for index, (question, score) in enumerate(sorted(zip(content_metadata, scores), key=lambda x: x[1], reverse=True)[:20]
-        # ):
-        #     print(f"\t{index}: {question}: {score}")
-
-        return scores
-
+        return embeddings_list_successful
 
 
 if __name__ == '__main__':
