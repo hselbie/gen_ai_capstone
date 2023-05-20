@@ -159,7 +159,7 @@ class CreateLookerEmbedding():
             content_metadata, api_calls_per_second=10, batch_size=5)
         # THIS IS THE QUESTION ENTRY POINT!!!!
         query_question = ['What are dashboards that list sales populations?']
-        query_question = [self.query_question]
+        # query_question= self.query_question
         x,y = self.encode_text_to_embedding_batched(query_question, api_calls_per_second=10, batch_size=5)
 
         # Get the embeddings for the query question.

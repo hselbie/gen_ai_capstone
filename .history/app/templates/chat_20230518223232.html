@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <title>Sapphire LLM Demo: {{ room }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script>$(document).ready(function () {
+            $("#myInput").on('keypress', function (e) {
+                if (e.which == 13) {
+                    var input_msg = $("#myInput").val();
+                    $("#chat").append("text: " + input_msg + '\r\n');
+                    $("#data_show").empty();
+                    $("<iframe />", {
+                        src: "{{ looker_sso_url }}",
+                        id: "frame"
+                    }).appendTo("#data_show");
+                    $.getJSON({
+                        type: "GET",
+                        url: "/input_msg",
+                        data: {
+                            'msg': input_msg,
+                        },
+                        success: function (data) {
+                            response_msg = data.response
+                            $("#chat").append("response: " + response_msg + '\r\n');
+                            console.log(data)
+                        }
+                    });
+                }
+            });
+        });</script>
+</head>
+<div class="container">
+
+    <body>
+        <h1>Sapphire LLM Demo: {{ room }}</h1>
+        <textarea id="chat" cols="80" rows="20"></textarea><br><br>
+        <input size="80" type="text" id="myInput" placeholder="Enter your query here"><br><br>
+    </body>
+</div>
+<div id="data_show" class="container centered">
+
+</div>
+
+</html>

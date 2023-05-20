@@ -10,6 +10,8 @@ langchain = "*"
 pandas = "*"
 vertexai = "*"
 chromadb = "*"
+flask = "*"
+flask-wtf = "*"
 
 [dev-packages]
 autopep8 = "*"
