@@ -1,8 +1,9 @@
 import looker_sdk
-import random
 import math
 import time
 import functools
+from match_looker_content import parse_search_input as psi
+from sklearn.metrics.pairwise import cosine_similarity
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures.process import ProcessPoolExecutor
 from tqdm.auto import tqdm
@@ -153,20 +154,25 @@ class CreateLookerEmbedding():
         )
         return is_successful, embeddings_list_successful
 
+    def extract_query_parameters(self):
+        x = psi.entity_extraction(self.query_question)
+        return x
+
+        
+
     def execute(self):
         content_metadata= self.looker_metadata['embedding_list'].tolist()
         is_successful, content_metadata_embeddings= self.encode_text_to_embedding_batched(
             content_metadata, api_calls_per_second=10, batch_size=5)
         # THIS IS THE QUESTION ENTRY POINT!!!!
-        query_question = ['What are dashboards that list sales populations?']
-        query_question = [self.query_question]
+        entity_based_question = self.extract_query_parameters()
+        query_question = [entity_based_question]
         x,y = self.encode_text_to_embedding_batched(query_question, api_calls_per_second=10, batch_size=5)
 
         # Get the embeddings for the query question.
         content_metadata= np.array(content_metadata)[is_successful]
 
         # Get similarity scores for each embedding by using dot-product.
-        # scores = np.dot(content_metadata_embeddings[question_index], content_metadata_embeddings.T)
         scores = np.dot(y,content_metadata_embeddings.T)
 
         # # Print top 20 matches
@@ -179,7 +185,7 @@ class CreateLookerEmbedding():
 
 
 if __name__ == '__main__':
-    ini = '/usr/local/google/home/hugoselbie/code_sample/py/ini/Looker_23_3.ini'
+    ini = '/usr/local/google/home/hugoselbie/code_sample/py/ini/.ini'
     sdk = looker_sdk.init40(config_file=ini)
 
     get_content_metadata = GetDashboardMetadata(sdk)
