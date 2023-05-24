@@ -17,8 +17,7 @@ class GetDashboardMetadata():
         self.sdk = sdk
 
     def get_all_dashboard_id(self, sdk):
-        dashboards = sdk.all_dashboards(fields='id, folder')
-        dashboards = [dash for dash in dashboards if not dash.folder.is_personal]
+        dashboards = sdk.all_dashboards(fields='id')
         dashboards = [dashboard['id'] for dashboard in dashboards if '::' not in dashboard['id']]
         return dashboards
 
@@ -128,10 +127,9 @@ class GetDashboardMetadata():
 
 
 if __name__ == '__main__':
-    ini = '/usr/local/google/home/hugoselbie/code_sample/py/ini/Looker_23_3.ini'
+    ini = '/usr/local/google/home/hugoselbie/code_sample/py/ini/demo.ini'
     sdk = looker_sdk.init40(config_file=ini)
 
     get_content_metadata = GetDashboardMetadata(sdk)
     response = get_content_metadata.execute()
     df = pd.DataFrame(response)
-    df.to_csv('looker_metadata.csv')

@@ -26,7 +26,7 @@ def _clean_response(response: str) -> str:
 
 def dashboard_summary_extraction(query_list, model: str = "text-bison-001"):
   prompt_template = f"""
-  Summarize these dashboard elements {query_list} as a prose description of dashboard intent, the first element is always the dashboard title.
+  Summarize this dashboard features as plain text {query_list}, the first element is always the dashboard title.
   """
   result_str = str(vertex_llm.predict(prompt_template, model))
   print("prompt result entity extraction: ", result_str)

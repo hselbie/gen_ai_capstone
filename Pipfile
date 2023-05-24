@@ -12,6 +12,7 @@ vertexai = "*"
 chromadb = "*"
 flask = "*"
 flask-wtf = "*"
+tenacity = "*"
 
 [dev-packages]
 autopep8 = "*"

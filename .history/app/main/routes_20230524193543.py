@@ -61,7 +61,8 @@ def index():
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""
-    sso_url= 'cortex-demo-genai::sap_order_to_cash_o2c_04_sales_performance_tuning'
+    dash_id = 'cortex-demo-genai::sap_order_to_cash_o2c_04_sales_performance_tuning'
+    sso_url = generate_looker_url(dash_id).url
     name = session.get('name', '')
     room = session.get('room', '')
     if name == '' or room == '':
