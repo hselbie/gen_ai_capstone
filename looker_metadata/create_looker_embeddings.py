@@ -4,6 +4,7 @@ import functools
 import time
 import numpy as np
 from match_looker_content import parse_search_input as psi
+import chromadb
 from tenacity import retry, stop_after_attempt, wait_fixed
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures.process import ProcessPoolExecutor
@@ -82,10 +83,33 @@ if __name__ == "__main__":
     ini = '/usr/local/google/home/hugoselbie/code_sample/py/ini/demo.ini'
     sdk = looker_sdk.init40(config_file=ini)
     query='test'
-    looker_metadata= pd.read_csv("looker_metadata.csv")
+    looker_metadata= pd.read_csv("l233looker_metadata.csv")
     embedding_model = TextEmbeddingModel.from_pretrained(
         "textembedding-gecko@001")
-    recommended = CreateLookerEmbedding(
-    sdk=sdk, looker_metadata=looker_metadata, 
-    embedding_model=embedding_model, 
-    query_question=query).extract_query_parameters()
+
+    chroma_client = chromadb.Client()
+    collection = chroma_client.create_collection(name="looker_embeddings")
+    for index, embed_list in enumerate(looker_metadata['embedding_list'].to_list()):
+        total = len(looker_metadata['embedding_list'].to_list())
+        print(f'{index}/{total}')
+        collection.add(
+            documents=embed_list,
+            ids=[f'id{index}']
+        )
+
+    query = collection.query(
+        query_texts=["'Business Pulse', 'Bubble size corresponds to average user spend', 'Highest Spending Users', 'State', ' City', ' Traffic Source', ' User Gender', ' Date', ' Location', ' Country', ' Name'"],
+        n_results=5
+    )
+    query2 = collection.query(
+        query_texts=['what can i go to learn about business reports and sales over time'],
+        n_results=2
+    )
+    print(query['documents'], query['distances'])
+    print(query2)
+    
+
+    # recommended = CreateLookerEmbedding(
+    # sdk=sdk, looker_metadata=looker_metadata, 
+    # embedding_model=embedding_model, 
+    # query_question=query).extract_query_parameters()

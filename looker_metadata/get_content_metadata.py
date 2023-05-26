@@ -116,7 +116,7 @@ class GetDashboardMetadata():
         response = pd.merge(db_df, elem_df, on='dashboard_id', how='outer')
         response.rename(columns={'title_y': 'element_title'}, inplace=True)
         response.rename(columns={'title_x': 'dash_title'}, inplace=True)
-        response['embedding_list'] = response[response.columns[1:]].apply(
+        response['embedding_list'] = response[response.columns[0:]].apply(
             lambda x: ','.join(x.dropna().astype(str)),
             axis=1
         )
